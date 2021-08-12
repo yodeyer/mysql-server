@@ -160,6 +160,7 @@
 #include "sql/sql_query_rewrite.h"  // invoke_pre_parse_rewrite_plugins
 #include "sql/sql_reload.h"         // handle_reload_request
 #include "sql/sql_rename.h"         // mysql_rename_tables
+#include "sql/sql_reset_autoincrement.h"  // mysql_reset_autoincrement
 #include "sql/sql_rewrite.h"        // mysql_rewrite_query
 #include "sql/sql_show.h"           // find_schema_table
 #include "sql/sql_table.h"          // mysql_create_table
@@ -4548,6 +4549,14 @@ int mysql_execute_command(THD *thd, bool first_level) {
       res = mysql_alter_user(thd, lex->users_list, lex->drop_if_exists);
       break;
     }
+    case SQLCOM_AUTO_INCREMENT: {
+      assert(first_table == all_tables && first_table != nullptr);
+
+      /* Conditionally writes to binlog. */
+      res = mysql_reset_autoincrement(thd, lex->query_tables);
+      break;
+    }
+    
     default:
       assert(0); /* Impossible */
       my_ok(thd);

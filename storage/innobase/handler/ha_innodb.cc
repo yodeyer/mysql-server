@@ -14886,6 +14886,14 @@ int ha_innobase::delete_table(const char *name, const dd::Table *table_def) {
   return (innobase_basic_ddl::delete_impl(thd, name, table_def, nullptr));
 }
 
+bool ha_innobase::reset_auto_increment() {
+  dict_table_autoinc_lock(m_prebuilt->table);
+  dict_table_autoinc_initialize(m_prebuilt->table, 1);
+  set_next_insert_id(1);
+  dict_table_autoinc_unlock(m_prebuilt->table);
+  return false;
+}
+
 /** Validate the parameters in st_alter_tablespace
 before using them in InnoDB tablespace functions.
 @param[in]	type		Type os tablespace being validated

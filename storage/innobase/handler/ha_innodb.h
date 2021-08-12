@@ -133,6 +133,8 @@ class ha_innobase : public handler {
 
   int delete_row(const uchar *buf) override;
 
+  bool reset_auto_increment() override;
+
   /** Delete all rows from the table.
   @retval HA_ERR_WRONG_COMMAND if the table is transactional
   @retval 0 on success */

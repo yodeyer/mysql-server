@@ -2265,6 +2265,7 @@ simple_statement:
         | alter_table_stmt
         | alter_user_stmt               { $$= nullptr; }
         | alter_view_stmt               { $$= nullptr; }
+        | auto_increment_stmt           { $$= nullptr; }
         | analyze_table_stmt
         | binlog_base64_event           { $$= nullptr; }
         | call_stmt
@@ -8129,6 +8130,18 @@ alter_view_stmt:
           }
           view_tail
           {}
+        ;
+
+auto_increment_stmt:
+          RESET_SYM AUTO_INC table_ident
+          {
+            LEX *lex=Lex;
+            lex->sql_command= SQLCOM_AUTO_INCREMENT;
+            lex->current_query_block()->add_table_to_list(lex->thd, $3, nullptr,
+                                                    TL_OPTION_UPDATING,
+                                                    TL_IGNORE,
+                                                    MDL_EXCLUSIVE);
+          }
         ;
 
 alter_event_stmt:

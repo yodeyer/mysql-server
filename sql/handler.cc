@@ -3885,6 +3885,11 @@ int handler::update_auto_increment() {
   return 0;
 }
 
+bool handler::reset_auto_increment() {
+  my_error(ER_NOT_SUPPORTED_YET, MYF(0), "RESET AUTO_INCREMENT NOT SUPPORTED ON THIS ENGINE");
+  return true;
+}
+
 /** @brief
   MySQL signal that it changed the column bitmap
 
